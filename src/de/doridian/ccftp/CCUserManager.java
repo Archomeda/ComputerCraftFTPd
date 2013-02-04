@@ -1,6 +1,6 @@
 package de.doridian.ccftp;
 
-import net.minecraft.server.mod_CCFTP;
+import de.doridian.ccftp.CCFTP;
 import org.apache.ftpserver.ftplet.Authentication;
 import org.apache.ftpserver.ftplet.AuthenticationFailedException;
 import org.apache.ftpserver.ftplet.Authority;
@@ -19,60 +19,65 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CCUserManager implements UserManager {
-    private final long max_filesize;
-    private final static Pattern filesizePat = Pattern.compile("([0-9]+)(KB|MB|GB|B)?");
+	private final long max_filesize;
+	private final static Pattern filesizePat = Pattern.compile("([0-9]+)(KB|MB|GB|B)?");
 
-    public CCUserManager(String maxFilesize) throws FtpException {
-        Matcher matcher = filesizePat.matcher(maxFilesize.toUpperCase());
-        if(!matcher.matches()) throw new FtpException("Invalid maximum filesize");
-        final long tempRawSize = Long.valueOf(matcher.group(1));
-        if(matcher.groupCount() > 1) {
-            final String tempRawUnit = matcher.group(2);
-            if(tempRawUnit == null || tempRawUnit.isEmpty() || tempRawUnit.equals("B")) {
-                max_filesize = tempRawSize;
-            } else if(tempRawUnit.equals("KB")) {
-                max_filesize = tempRawSize * 1024;
-            } else if(tempRawUnit.equals("MB")) {
-                max_filesize = tempRawSize * 1024 * 1024;
-            } else if(tempRawUnit.equals("GB")) {
-                max_filesize = tempRawSize * 1024 * 1024 * 1024;
-            } else {
-                throw new FtpException("Invalid unit");
-            }
-        } else {
-            max_filesize = tempRawSize;
-        }
+	public CCUserManager(String maxFilesize) throws FtpException {
+		Matcher matcher = filesizePat.matcher(maxFilesize.toUpperCase());
+		if (!matcher.matches())
+			throw new FtpException("Invalid maximum filesize");
+		final long tempRawSize = Long.valueOf(matcher.group(1));
+		if (matcher.groupCount() > 1) {
+			final String tempRawUnit = matcher.group(2);
+			if (tempRawUnit == null || tempRawUnit.isEmpty() || tempRawUnit.equals("B")) {
+				max_filesize = tempRawSize;
+			} else if (tempRawUnit.equals("KB")) {
+				max_filesize = tempRawSize * 1024;
+			} else if (tempRawUnit.equals("MB")) {
+				max_filesize = tempRawSize * 1024 * 1024;
+			} else if (tempRawUnit.equals("GB")) {
+				max_filesize = tempRawSize * 1024 * 1024 * 1024;
+			} else {
+				throw new FtpException("Invalid unit");
+			}
+		} else {
+			max_filesize = tempRawSize;
+		}
 
-        System.out.println("Set max filesize to be " + max_filesize + " bytes");
-    }
-    
+		System.out.println("Set max filesize to be " + max_filesize + " bytes");
+	}
+
 	Pattern userPat = Pattern.compile("((.*)\\.)?([0-9]+)");
+
 	@Override
 	public User getUserByName(String username) throws FtpException {
 		Matcher matcher = userPat.matcher(username);
-		if(!matcher.matches()) return null;
+		if (!matcher.matches())
+			return null;
 		return new CCUser(matcher.group(2), Integer.valueOf(matcher.group(3)));
 	}
 
 	@Override
 	public User authenticate(Authentication authentication) throws AuthenticationFailedException {
-		if(authentication instanceof AnonymousAuthentication) {
+		if (authentication instanceof AnonymousAuthentication) {
 			throw new AuthenticationFailedException("Anonymous login not permitted");
-		} else if(authentication instanceof UsernamePasswordAuthentication) {
-			UsernamePasswordAuthentication upwd = (UsernamePasswordAuthentication)authentication;
+		} else if (authentication instanceof UsernamePasswordAuthentication) {
+			UsernamePasswordAuthentication upwd = (UsernamePasswordAuthentication) authentication;
 			try {
 				User user = getUserByName(upwd.getUsername());
-				if(user == null) throw new AuthenticationFailedException("Invalid username (its either ID or WORLD.ID)");
+				if (user == null)
+					throw new AuthenticationFailedException("Invalid username (its either ID or WORLD.ID)");
 				String cpwd = user.getPassword();
-				if(cpwd != null && !cpwd.isEmpty() && cpwd.equals(upwd.getPassword())) {
+				if (cpwd != null && !cpwd.isEmpty() && cpwd.equals(upwd.getPassword())) {
 					return user;
 				}
-			} catch(AuthenticationFailedException e) {
+			} catch (AuthenticationFailedException e) {
 				throw e;
-			} catch(FtpException e) {
+			} catch (FtpException e) {
 				e.printStackTrace();
 			}
-			throw new AuthenticationFailedException("Authentication failed (did you remember to use WORLD.ID if the computer is not in the default world?)");
+			throw new AuthenticationFailedException(
+					"Authentication failed (did you remember to use WORLD.ID if the computer is not in the default world?)");
 		} else {
 			throw new AuthenticationFailedException("Authentication method not supported");
 		}
@@ -84,8 +89,8 @@ public class CCUserManager implements UserManager {
 		private String password;
 
 		private CCUser(String worldName, int computerID) {
-			if(worldName == null || worldName.isEmpty()) {
-				worldName = mod_CCFTP.default_world;
+			if (worldName == null || worldName.isEmpty()) {
+				worldName = CCFTP.default_world;
 			}
 
 			this.username = worldName + "." + computerID;
@@ -95,9 +100,11 @@ public class CCUserManager implements UserManager {
 				BufferedReader reader = new BufferedReader(new FileReader(new File(folder, "_ftppasswd")));
 				password = reader.readLine();
 				reader.close();
-			} catch(Exception e) { password = null; }
+			} catch (Exception e) {
+				password = null;
+			}
 		}
-		
+
 		@Override
 		public String getName() {
 			return username;
@@ -120,9 +127,9 @@ public class CCUserManager implements UserManager {
 
 		@Override
 		public AuthorizationRequest authorize(AuthorizationRequest authorizationRequest) {
-            if(authorizationRequest instanceof MaxFilesizeRequest) {
-                ((MaxFilesizeRequest)authorizationRequest).setMaxFilesize(max_filesize);
-            }
+			if (authorizationRequest instanceof MaxFilesizeRequest) {
+				((MaxFilesizeRequest) authorizationRequest).setMaxFilesize(max_filesize);
+			}
 			return authorizationRequest;
 		}
 
@@ -163,8 +170,10 @@ public class CCUserManager implements UserManager {
 	}
 
 	@Override
-	public void delete(String s) throws FtpException { }
+	public void delete(String s) throws FtpException {
+	}
 
 	@Override
-	public void save(User user) throws FtpException { }
+	public void save(User user) throws FtpException {
+	}
 }

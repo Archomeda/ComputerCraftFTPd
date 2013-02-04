@@ -24,6 +24,9 @@
 # Mac filesystem dust
 /.DS_Store
 
+# ignore thumbnails created by Windows
+Thumbs.db
+
 # intellij
 *.iml
 *.ipr
