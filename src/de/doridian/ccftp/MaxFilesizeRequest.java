@@ -9,7 +9,7 @@ public class MaxFilesizeRequest implements AuthorizationRequest {
 		return max_filesize;
 	}
 
-	public void setMaxFilesize(long newSize) {
+    public void setMaxFilesize(long newSize) {
 		max_filesize = newSize;
 	}
 }

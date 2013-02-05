@@ -8,39 +8,39 @@ import org.apache.ftpserver.ftplet.FtpException;
 import org.apache.ftpserver.listener.ListenerFactory;
 
 public class ComputerCraftFTP {
-	public ComputerCraftFTP(int port, String bindAddress, String pasvPorts, String pasvAddress, String maxFilesize)
-			throws FtpException {
-		FtpServerFactory serverFactory = new FtpServerFactory();
+    public ComputerCraftFTP(int port, String bindAddress, String pasvPorts, String pasvAddress, String maxFilesize)
+            throws FtpException {
+        FtpServerFactory serverFactory = new FtpServerFactory();
 
-		ListenerFactory factory = new ListenerFactory();
+        ListenerFactory factory = new ListenerFactory();
 
-		// set the host and port of the listener
-		if (bindAddress != null && !bindAddress.isEmpty())
-			factory.setServerAddress(bindAddress);
+        // set the host and port of the listener
+        if (bindAddress != null && !bindAddress.isEmpty())
+            factory.setServerAddress(bindAddress);
 
-		factory.setPort(port);
+        factory.setPort(port);
 
-		// Data connection config
-		DataConnectionConfigurationFactory configurationFactory = new DataConnectionConfigurationFactory();
-		if (pasvPorts != null && !pasvPorts.isEmpty()) {
-			configurationFactory.setPassivePorts(pasvPorts);
-			configurationFactory.setPassiveExternalAddress(pasvAddress);
-		}
-		factory.setDataConnectionConfiguration(configurationFactory.createDataConnectionConfiguration());
+        // Data connection config
+        DataConnectionConfigurationFactory configurationFactory = new DataConnectionConfigurationFactory();
+        if (pasvPorts != null && !pasvPorts.isEmpty()) {
+            configurationFactory.setPassivePorts(pasvPorts);
+            configurationFactory.setPassiveExternalAddress(pasvAddress);
+        }
+        factory.setDataConnectionConfiguration(configurationFactory.createDataConnectionConfiguration());
 
-		// Connection config
-		ConnectionConfigFactory connectionConfigFactory = new ConnectionConfigFactory();
-		connectionConfigFactory.setAnonymousLoginEnabled(false);
-		serverFactory.setConnectionConfig(connectionConfigFactory.createConnectionConfig());
+        // Connection config
+        ConnectionConfigFactory connectionConfigFactory = new ConnectionConfigFactory();
+        connectionConfigFactory.setAnonymousLoginEnabled(false);
+        serverFactory.setConnectionConfig(connectionConfigFactory.createConnectionConfig());
 
-		// replace the default listener
-		serverFactory.addListener("default", factory.createListener());
+        // replace the default listener
+        serverFactory.addListener("default", factory.createListener());
 
-		serverFactory.setUserManager(new CCUserManager(maxFilesize));
+        serverFactory.setUserManager(new CCUserManager(maxFilesize));
 
-		// start the server
-		FtpServer server = serverFactory.createServer();
+        // start the server
+        FtpServer server = serverFactory.createServer();
 
-		server.start();
-	}
+        server.start();
+    }
 }
