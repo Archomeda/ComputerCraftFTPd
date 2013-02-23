@@ -59,10 +59,14 @@
         <delete dir="${maven.dir}" />
     </target>
     
-    <!-- Copies the CCFTPd source files to the MCP src directory and sets the mod version in the source files -->
+    <!-- Copies the CCFTPd source files to the MCP src directory and sets the mod version in the source files
+         and copies the libraries as well -->
     <target name="merge" depends="clean">
         <copy todir="${mcp.home}/src/minecraft" overwrite="true" verbose="true">
             <fileset dir="${basedir}/src" includes="**/*.java" />
+        </copy>
+        <copy todir="${mcp.home}/lib" overwrite="true" verbose="true">
+            <fileset dir="${lib.dir}" includes="**/*.jar" />
         </copy>
         <replace dir="${mcp.home}/src/minecraft" token="@MOD_VERSION@" value="${version}" />
     </target>
