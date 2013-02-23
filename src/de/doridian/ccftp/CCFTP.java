@@ -2,6 +2,8 @@ package de.doridian.ccftp;
 
 import java.util.logging.Level;
 
+import org.apache.log4j.Logger;
+
 import net.minecraftforge.common.Configuration;
 
 import cpw.mods.fml.common.FMLLog;
@@ -34,6 +36,10 @@ public class CCFTP {
 
     @PreInit
     public void preInit(FMLPreInitializationEvent event) {
+        // Less log spam from Apache FTP server (changed from INFO (default) to WARN)
+        Logger.getLogger("org.apache.mina").setLevel(org.apache.log4j.Level.WARN);
+        Logger.getLogger("org.apache.ftpserver").setLevel(org.apache.log4j.Level.WARN);
+
         Configuration config = new Configuration(event.getSuggestedConfigurationFile());
 
         try {
