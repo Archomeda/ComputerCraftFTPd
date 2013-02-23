@@ -6,17 +6,16 @@
 # netbeans
 /nbproject
 
-# we use maven!
-/build.xml
-
-# maven
-/target
+# Ant
+/build.properties
+/build
+/lib
+/maven
 
 # vim
 .*.sw[a-p]
 
 # various other potential build files
-/build
 /bin
 /dist
 /manifest.mf

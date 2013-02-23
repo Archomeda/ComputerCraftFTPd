@@ -16,7 +16,7 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 
-@Mod(modid = "CCFTP", name = "ComputerCraftFTPd", version = "1.0")
+@Mod(modid = "CCFTP", name = "ComputerCraftFTPd", version = "@MOD_VERSION@")
 @NetworkMod(clientSideRequired = false, serverSideRequired = false)
 public class CCFTP {
     @Instance("CCFTP")
